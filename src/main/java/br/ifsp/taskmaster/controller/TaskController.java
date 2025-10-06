@@ -10,9 +10,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
-
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.http.HttpStatus;
 
@@ -30,6 +30,7 @@ import org.springframework.data.domain.Pageable;
 
 import br.ifsp.taskmaster.dto.TaskDTO;
 import br.ifsp.taskmaster.dto.TaskUpdateDTO;
+import br.ifsp.taskmaster.dto.TaskUpdatePartiallyDTO;
 
 
 @RestController
@@ -50,11 +51,18 @@ public class TaskController {
         return taskService.createTask(taskCreateDTO);
     }
 
-    @Operation(summary = "Atualiza uma task existente")
+    @Operation(summary = "Atualiza parcialmente uma task existente por id")
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public TaskUpdateDTO updateTaskPartially(@PathVariable Long id, @RequestBody TaskUpdateDTO taskUpdateDTO) {
+    public TaskUpdatePartiallyDTO updateTaskPartially(@PathVariable Long id, @RequestBody TaskUpdatePartiallyDTO taskUpdateDTO) {
         return taskService.updateTaskPartially(id, taskUpdateDTO);
+    }
+
+    @Operation(summary = "Atualizar uma task inteira existente por id")
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public TaskUpdateDTO updateTask(@PathVariable long id,@Valid @RequestBody TaskUpdateDTO taskUpdateDto) {
+        return taskService.updateTask(id, taskUpdateDto);
     }
 
     @Operation(summary = "Deleta uma task existente")
@@ -74,8 +82,17 @@ public class TaskController {
     @Operation(summary = "Busca todas as tasks")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Page<TaskDTO> getAllTasks(Pageable pageable) {
+    public Page<TaskDTO> getAllTasks(
+        @RequestParam(required = false) String categoria,
+        Pageable pageable) {
+
+    if (categoria != null && !categoria.isBlank()) {
+        return taskService.getTaskByCategoria(categoria);
+    } else {
         return taskService.getAllTasks(pageable);
     }
+}
+
+    
     
 }

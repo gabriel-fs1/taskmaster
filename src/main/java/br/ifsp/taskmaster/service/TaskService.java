@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import br.ifsp.taskmaster.dto.TaskCreateDTO;
 import br.ifsp.taskmaster.dto.TaskDTO;
 import br.ifsp.taskmaster.dto.TaskUpdateDTO;
+import br.ifsp.taskmaster.dto.TaskUpdatePartiallyDTO;
 import br.ifsp.taskmaster.exception.ResourceNotFoundException;
 import br.ifsp.taskmaster.model.Task;
 import br.ifsp.taskmaster.repository.TaskRepository;
@@ -32,7 +33,7 @@ public class TaskService {
         return modelMapper.map(saved, TaskCreateDTO.class);
     }
 
-    public TaskUpdateDTO updateTaskPartially(Long id, TaskUpdateDTO taskUpdDTO){
+    public TaskUpdatePartiallyDTO updateTaskPartially(Long id, TaskUpdatePartiallyDTO taskUpdDTO){
         Task existingTask = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Nenhuma task com o id: " + id + " foi encontrada.")); 
 
         taskUpdDTO.getTitulo().ifPresent(existingTask::setTitulo);
@@ -45,6 +46,21 @@ public class TaskService {
         }
         existingTask.setDataLimite(data);
     });
+        Task savedTask = taskRepository.save(existingTask);
+        return modelMapper.map(savedTask, TaskUpdatePartiallyDTO.class);
+    }
+
+    public TaskUpdateDTO updateTask(Long id, TaskUpdateDTO taskUpdDTO) {
+        Task existingTask = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Nenhuma task com o id: " + id + " foi encontrada.")); 
+
+        existingTask.setTitulo(taskUpdDTO.getTitulo());
+        existingTask.setDescricao(taskUpdDTO.getDescricao());
+        existingTask.setCategoria(taskUpdDTO.getCategoria());
+        if (taskUpdDTO.getDataLimite().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("A data limite não pode ser no passado");
+        }
+        existingTask.setDataLimite(taskUpdDTO.getDataLimite());
+
         Task savedTask = taskRepository.save(existingTask);
         return modelMapper.map(savedTask, TaskUpdateDTO.class);
     }
