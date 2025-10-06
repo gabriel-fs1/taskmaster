@@ -6,6 +6,13 @@ Este projeto consiste em uma **API RESTful** para gerenciamento de tarefas pesso
 
 O principal objetivo deste exercício é consolidar e demonstrar conhecimentos avançados na construção de APIs robustas e escaláveis com o ecossistema Spring.
 
+---
+## 👨‍💻 Criadores
+
+* Gabriel Feitoza da Silva - GU3046567
+* Nathalie Gonçalves Xavier - GU3046443
+---
+
 ### Restrições Importantes:
 
   - Não é permitido criar tarefas com `dataLimite` anterior à data atual.
@@ -80,10 +87,3 @@ mvn test
 ```
 
 Este comando executará todos os testes unitários e de integração, validando as regras de negócio, o funcionamento dos endpoints e o tratamento de exceções. Os relatórios de teste podem ser encontrados em `target/surefire-reports`.
-
----
-## 👨‍💻 Criadores
-
-* Gabriel Feitoza da Silva - GU3046567
-* Nathalie Gonçalves Xavier - GU3046443
----
